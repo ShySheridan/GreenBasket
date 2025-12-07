@@ -1,5 +1,10 @@
 package com.greenbasket.server.socket;
 
+import com.greenbasket.core.util.AppException;
+import com.greenbasket.server.socket.commands.CommandHandler;
+
+import java.util.HashMap;
+
 /**
  * Разбор и обработка команд протокола поверх сокета.
  *
@@ -14,9 +19,22 @@ package com.greenbasket.server.socket;
  *     <li>формирование текстового/JSON-ответа для клиента.</li>
  * </ul>
  *
- * <p>Dispatcher выступает "входным адаптером" (inbound adapter):
+ * <p> выступает "входным адаптером" (inbound adapter):
  * он переводит понятия протокола (команды, сообщения) в понятия домена
  * (продукты, категории, заказы).
  */
 public class SocketController {
+    private final ClientHandler clientHandler;
+    private final HashMap<String, CommandHandler> commandList;
+
+
+    public SocketController(ClientHandler clientHandler) {
+        this.clientHandler = clientHandler;
+
+    }
+
+    public String handle(String rawRequest) throws AppException{
+
+    }
+
 }

@@ -104,5 +104,8 @@ public class UserService {
                 .build();
     }
 
+
+    // isPasswordCorrect
+
     // TODO регистрация, авторизация, аутентификация
 }
