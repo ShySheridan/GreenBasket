@@ -1,6 +1,6 @@
 package com.greenbasket.server.socket;
 
-import com.greenbasket.core.util.AppException;
+import com.greenbasket.core.exception.AppException;
 import com.greenbasket.server.socket.commands.CommandHandler;
 
 import java.util.HashMap;

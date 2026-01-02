@@ -2,7 +2,7 @@ package service;
 import com.greenbasket.core.domain.*;
 import com.greenbasket.core.repository.*;
 import com.greenbasket.core.service.*;
-import com.greenbasket.core.util.AppException;
+import com.greenbasket.core.exception.AppException;
 import com.greenbasket.core.util.IdGenerator;
 import com.greenbasket.server.util.idGenerator.SimpleIdGenerator;
 import com.greenbasket.server.persistence.memory.*;

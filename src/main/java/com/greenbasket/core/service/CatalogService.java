@@ -12,14 +12,8 @@ import com.greenbasket.core.repository.CategoryInterface;
 import com.greenbasket.core.repository.CommentInterface;
 import com.greenbasket.core.repository.ProductInterface;
 import com.greenbasket.core.repository.UserInterface;
-import com.greenbasket.core.util.AppException;
 
-import javax.management.InstanceAlreadyExistsException;
 import javax.management.InstanceNotFoundException;
-import java.util.Comparator;
-import java.util.List;
-
-import static com.greenbasket.core.util.Validators.*;
 
 public class CatalogService {
     private final ProductInterface productRepository;

@@ -14,10 +14,9 @@ import javax.management.InstanceAlreadyExistsException;
 
 
 @Getter
-@EqualsAndHashCode(of = "id")
 @ToString
 @NoArgsConstructor(force = true)
-@SuperBuilder // Поддержка передачи параметров в родительский класс через idGenerator,
+//@SuperBuilder // Поддержка передачи параметров в родительский класс через idGenerator,
 // Создание строителя для всех классов в иерархии
 
 public abstract class BaseEntity {
@@ -31,11 +30,28 @@ public abstract class BaseEntity {
 //        this.idGenerator = idGenerator; //
 //    }
 
-    public void assignId(Long id) throws InstanceAlreadyExistsException { // не позволяем менять id
+    public final void assignId(Long id) throws InstanceAlreadyExistsException { // не позволяем менять id
         // не запрашивает параметры, тк работает с полем своего класса
         if (this.id != null) // если ссылка != null значит id уже был задан
             throw new InstanceAlreadyExistsException("id already set");
+        if (id == null) throw new IllegalArgumentException("id is null");
         this.id = id; // передаем реализацию интерфейса IdGenerator в конструктор базового класса
+    }
+
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BaseEntity that = (BaseEntity) o;
+        return this.id != null && this.id.equals(that.id);
+    }
+
+
+    @Override
+    public final int hashCode() {
+        // значение будет задаваться программой после сохранения
+        return 52;
     }
 
 }

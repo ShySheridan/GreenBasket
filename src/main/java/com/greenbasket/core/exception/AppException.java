@@ -1,4 +1,10 @@
-package com.greenbasket.core.util;
+package com.greenbasket.core.exception;
+
+enum ErrorCode {
+    INVALID_QUANTITY,
+    OUT_OF_STOCK,
+    CATEGORY_NOT_EMPTY
+}
 
 public class AppException extends RuntimeException {
     private final String code;

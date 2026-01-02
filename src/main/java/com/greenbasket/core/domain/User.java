@@ -7,7 +7,7 @@ import lombok.*;
 
 import java.util.List;
 
-//@Entity.
+//@Entity
 //@Table(name = "users")
 @Setter
 @Getter
@@ -22,6 +22,12 @@ public class User extends BaseEntity {
     private List<Order> orders;
     private String email;
     private String phone;
+    private Role role;
+
+    public enum Role {
+        ADMIN,
+        COSTUMER,
+    }
 
 //    @lombok.Setter private List<Product> wishlist;
     // TODO: отслеживать все комментарии этого юзера List<Comment> comments

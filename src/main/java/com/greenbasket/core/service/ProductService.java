@@ -1,12 +1,11 @@
 package com.greenbasket.core.service;
 
 import com.greenbasket.core.domain.Category;
-import com.greenbasket.core.domain.Comment;
 import com.greenbasket.core.domain.Product;
 import com.greenbasket.core.repository.CategoryInterface;
 import com.greenbasket.core.repository.CommentInterface;
 import com.greenbasket.core.repository.ProductInterface;
-import com.greenbasket.core.util.AppException;
+import com.greenbasket.core.exception.AppException;
 
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.InstanceNotFoundException;
@@ -48,11 +47,11 @@ public class ProductService {
     private List<Product> requireProductsByCategory(Long categoryId
     ) throws InstanceNotFoundException {
 
-        if (productRepository.findByCategoryId(categoryId).isEmpty()) {
+        var products = productRepository.findByCategoryId(categoryId);
+        if (products.isEmpty()) {
             throw new InstanceNotFoundException("продукты не найдены");
         }
-
-        return productRepository.findByCategoryId(categoryId);
+        return products;
     }
 
     private List<Product> sortProducts(Long categoryId, Comparator<Product> comparator, CatalogService.Direction direction
@@ -139,7 +138,8 @@ public class ProductService {
 
     public void applyDiscountToProduct(Long productId, int discount
     ) throws InstanceNotFoundException {
-        requireProduct(productId).setDiscount(discount);
+        Product product = requireProduct(productId);
+        product.setPrice(product.getPrice() * discount / 100);
     }
 
 

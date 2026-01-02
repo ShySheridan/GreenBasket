@@ -35,10 +35,9 @@ public class UserService {
 //    }
 
     /**
-     * Регистрация нового пользователя.
-     * - проверяем, что email уникален
-     * - хэшируем пароль
-     * - сохраняем пользователя с passwordHash
+     * Регистрация нового покупателя
+     * Проверяем, что email уникален, хэшируем пароль
+     * сохраняем пользователя с passwordHash
      */
     public User register(String email, String name, String rawPassword, String phone)
             throws InstanceAlreadyExistsException {
@@ -71,19 +70,19 @@ public class UserService {
      * Аутентификация (логин) пользователя по email и паролю.
      * Возвращает User при удачном логине, либо кидает исключение.
      */
-    public User login(String email, String rawPassword, String phone)
+    public User signIn(String email, String rawPassword, String phone)
             throws InstanceNotFoundException {
 
         String safeEmail = requireValidEmail(email, "почта")
                 .trim()
                 .toLowerCase();
-        String safePassword = requireNonBlank(rawPassword, "пароль");
-        String safePhone = requireValidPhone(phone, "номер телефона");
+//        String safePassword = requireNonBlank(rawPassword, "пароль");
+//        String safePhone = requireValidPhone(phone, "номер телефона");
 
         User user = userRepository.findByEmail(safeEmail)
                 .orElseThrow(() -> new InstanceNotFoundException("пользователь не найден"));
 
-        if (!passwordHasher.matches(safePassword, user.getPasswordHash())) {
+        if (!passwordHasher.matches(rawPassword, user.getPasswordHash())) {
             throw new IllegalArgumentException("неверный пароль");
         }
 

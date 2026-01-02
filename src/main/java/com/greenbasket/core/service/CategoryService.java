@@ -58,12 +58,10 @@ public class CategoryService {
     }
 
 
-
     public Category getCategoryById(Long id) throws InstanceNotFoundException {
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new InstanceNotFoundException("категория не найдена"));
     }
-
 
 
     public List<Category> getAllCategories() {
@@ -80,7 +78,7 @@ public class CategoryService {
 
         List<Product> products = productRepository.findByCategoryId(categoryId);
         for (Product product : products) {
-            product.setDiscount(safeDiscount);
+            product.setPrice(product.getPrice() * discount / 100);
         }
     }
 

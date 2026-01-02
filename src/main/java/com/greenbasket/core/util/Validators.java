@@ -16,6 +16,8 @@ requireNonNegative(int, "PRICE_INVALID").
  */
 package com.greenbasket.core.util;
 
+import com.greenbasket.core.exception.AppException;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.regex.Pattern;

@@ -36,6 +36,10 @@ public class Order extends BaseEntity {
 //    @lombok.Setter
     private Delivery delivery;
 
+    public static Order create(Long userId, int price) {
+        return null;
+    }
+
 // TODO добавить вес продуктов
 // TODO добавить доставку или самовывоз
 
