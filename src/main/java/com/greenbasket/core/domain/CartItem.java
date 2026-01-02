@@ -12,8 +12,6 @@ import lombok.experimental.SuperBuilder;
 public class CartItem {
     private final Long productId;
     private int quantity;
-    private final Product product;
-
 
     public record CartItemView(
             Long productId,
@@ -23,9 +21,7 @@ public class CartItem {
     ) {}
 
 
-    public CartItem(Long productId, int quantity, Product product) {
-        this.product = product;
-
+    public CartItem(Long productId, int quantity) {
         if (productId == null) {
             throw new IllegalArgumentException("productId не должно быть null");
         }
@@ -37,14 +33,14 @@ public class CartItem {
     }
 
 
-    protected void changeQuantity(int newQuantity) {
+    void changeQuantity(int newQuantity) {
         if (newQuantity <= 0) {
             throw new IllegalArgumentException("количество продукта в корзине должно быть > 0");
         }
         this.quantity = newQuantity;
     }
 
-    protected void increase(int delta) {
+    void increase(int delta) {
         int result = this.quantity + delta;
         if (result <= 0) {
             throw new IllegalArgumentException("количество продукта в корзине должно быть > 0");
@@ -52,20 +48,22 @@ public class CartItem {
         this.quantity = result;
     }
 
-    protected void decrease(int delta) {
+    void decrease(int delta) {
+        if (delta <= 0) throw new IllegalArgumentException("delta должно быть > 0");
         int result = this.quantity - delta;
-
-    }
-
-    public int getPrice(){
-        assert product != null;
-        int totalPrice = product.getPrice() * quantity;
-        if (product.getDiscount() != 0){
-            totalPrice = totalPrice * product.getDiscount() / 100;
+        if (result <= 0) {
+            throw new IllegalArgumentException("количество продукта в корзине должно быть > 0");
         }
-        return totalPrice;
+        this.quantity = result;
     }
 
-
+//    int getPrice(){
+//        Product product =
+//        int totalPrice = product.getPrice() * quantity;
+//        if (product.getDiscount() != 0){
+//            totalPrice = totalPrice * product.getDiscount() / 100;
+//        }
+//        return totalPrice;
+//    }
 
 }

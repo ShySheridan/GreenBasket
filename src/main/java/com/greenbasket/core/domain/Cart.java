@@ -14,12 +14,13 @@ import java.util.Map;
 @Setter
 @Getter
 @ToString
-@NoArgsConstructor(force = true)
+//@NoArgsConstructor(force = true)
 @AllArgsConstructor
 @SuperBuilder
 public class Cart extends BaseEntity {
     private final Long userId;
     // ключ — productId, значение — позиция в корзине
+    @Getter(AccessLevel.NONE) // не отдаём наружу мутируемую Map
     private Map<Long, CartItem> items = new LinkedHashMap<>();
 
     public record CartView(
@@ -27,6 +28,11 @@ public class Cart extends BaseEntity {
             List<CartItem.CartItemView> items,
             int totalPrice
     ) {}
+
+    public Cart(Long userId) {
+        if (userId == null) throw new IllegalArgumentException("userId не должен быть null");
+        this.userId = userId;
+    }
 
     public void addItem(Long productId, int qty) {
         if (qty <= 0) throw new AppException("Количество должно быть > 0");

@@ -21,10 +21,6 @@ public class AppContext {
     private final IdGenerator idGenerator;
     private final PasswordHasher passwordHasher;
 //    private final SocketController socketController;
-
-    private final Product product;
-    private final Cart bucket;
-
     private final ProductInterface productRepository;
     private final CategoryInterface categoryRepository;
     private final CommentInterface commentRepository ;
@@ -49,10 +45,7 @@ public class AppContext {
 //    public AppContext(PasswordHasher passwordHasher, SocketController socketController, IdGenerator idGenerator,
 //                      ProductInterface productRepository, CategoryInterface categoryRepository,
 //                      CommentInterface commentRepository) {
-    public AppContext() throws IOException {
-        this.product = new Product();
-        this.bucket = new Cart();
-
+    public AppContext() {
         this.passwordHasher = new BCryptPasswordHasher();
 //        this.socketController = new SocketController(new ClientHandler());
         this.idGenerator = new SimpleIdGenerator();
@@ -60,7 +53,7 @@ public class AppContext {
         this.categoryRepository = new CategoryInMemory(idGenerator);
         this.commentRepository = new CommentInMemory(idGenerator);
         this.userRepository = new UserInMemory(idGenerator);
-        this.cartRepository = new CartInMemory();
+        this.cartRepository = new CartInMemory(idGenerator);
         this.orderRepository = new OrderInMemory();
 
         this.productService = new ProductService(productRepository, categoryRepository, commentRepository);
@@ -71,7 +64,7 @@ public class AppContext {
         this.userService =
                 new UserService(userRepository, passwordHasher);
         this.cartService =
-                new CartService(productRepository, cartRepository, userRepository, bucket, product, orderRepository);
+                new CartService(productRepository, cartRepository, userRepository, orderRepository);
     }
 
     public ProductService productService() {
@@ -86,8 +79,8 @@ public class AppContext {
         return commentService;
     }
 
-    public UserInterface userService() {
-        return userRepository;
+    public UserService userService() {
+        return userService;
     }
 
 
@@ -99,8 +92,8 @@ public class AppContext {
         handlers.put("SIGN_IN",
                 new SignInCommandHandler(userService));
         handlers.put("SIGN_OUT",
-                new SighOutCommandHandler(userService));
-        handlers.put("SIGH_UP",
+                new SignOutCommandHandler(userService));
+        handlers.put("SIGN_UP",
                 new SignUpCommandHandler(userService));
         handlers.put("EXIT",
                 new ExitCommandHandler());

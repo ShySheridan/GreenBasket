@@ -19,32 +19,28 @@ import java.util.Optional;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 @SuperBuilder
-public class CartService extends BaseEntity {
-    private final Cart cart;
-    private final Product product;
+public class CartService {
     private final CartInterface cartRepository;
     private final ProductInterface productRepository;
     private final UserInterface userRepository;
     private final OrderInterface orderRepository;
 
     public CartService(ProductInterface productRepository, CartInterface cartRepository, UserInterface userRepository,
-                         Cart cart, Product product, OrderInterface orderRepository) {
+                         OrderInterface orderRepository) {
         this.productRepository = productRepository;
         this.cartRepository = cartRepository;
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
-        this.cart = cart;
-        this.product = product;
     }
 
 //    Получить текущую корзину или создать
     public Cart getOrCreateCart(Long userId){
-        Optional<Cart> opt = cartRepository.findById(userId);
+        Optional<Cart> opt = cartRepository.findByUserId(userId);
         if (opt.isPresent()) {
             return opt.get();
         }
 
-        Cart cart = new Cart();
+        Cart cart = new Cart(userId);
         cartRepository.save(cart);
         return cart;
     }
@@ -70,18 +66,19 @@ public class CartService extends BaseEntity {
         );
 
         List<CartItem.CartItemView> items = new ArrayList<>();
-        int totalsSum = 0;
+        int totalSum = 0;
 
-        for (CartItem cartItem : cart.getItems().values()) {
+        for (CartItem cartItem : cart.items()) {
             Product product = productRepository.findById(cartItem.getProductId()).orElseThrow(
                     () -> new NotFoundException("Продукт не найден")
             );
-            int price = product.getPrice() + cartItem.getQuantity();
-            totalsSum += price;
+            int unitPrice = discountedUnitPrice(product);
+            int lineTotal = unitPrice * cartItem.getQuantity();
+            totalSum += lineTotal;
 
-            items.add(new CartItem.CartItemView(product.getId(), product.getName(), price, cartItem.getQuantity()));
+            items.add(new CartItem.CartItemView(product.getId(), product.getName(), unitPrice, cartItem.getQuantity()));
         }
-        return new Cart.CartView(cart.getId(), items, totalsSum);
+        return new Cart.CartView(cart.getId(), items, totalSum);
     }
 
 
@@ -106,11 +103,12 @@ public class CartService extends BaseEntity {
     }
 
 
-    public void clear(Long userId){
-        Cart cart = getOrCreateCart(userId);
-        if (!cart.getItems().isEmpty()) {
-            cart.getItems().clear();
-        }
+    public void clear(Long userId) {
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundException("Корзина не найдена"));
+
+        cart.clear();
+        cartRepository.save(cart);
     }
 
 //    оформить заказ
@@ -122,7 +120,7 @@ public class CartService extends BaseEntity {
                 () -> new NotFoundException("Корзина не найдена")
         );
 
-        if (cart.getItems().isEmpty()) {
+        if (cart.items().isEmpty()) {
             throw new BusinessException("Корзина пустая");
         }
 
@@ -146,11 +144,24 @@ public class CartService extends BaseEntity {
                 .orElseThrow(() -> new NotFoundException("Корзина не найдена"));
 
         int total = 0;
-
         for (CartItem item : cart.items()) {
-            total += item.getPrice();
+            Product product = productRepository.findById(item.getProductId())
+                    .orElseThrow(() -> new NotFoundException("Продукт не найден"));
+
+            total += discountedUnitPrice(product) * item.getQuantity();
         }
 
         return total;
+    }
+
+
+    private int discountedUnitPrice(Product product) {
+        int price = product.getPrice();
+        int discount = product.getDiscount(); // ожидаем 0..100
+
+        if (discount <= 0) return price;
+        if (discount >= 100) return 0;
+
+        return price * (100 - discount) / 100;
     }
 }

@@ -24,7 +24,7 @@ import java.util.Objects;
  * <ul>
  *     <li>знать бизнес-правила (скидки, корзины и т.д.);</li>
  *     <li>напрямую работать с репозиториями или БД;</li>
- *     <li>создавать/конфигурировать ServerSocket (это задача {@link ServerSocketChanel}).</li>
+ *     <li>создавать/конфигурировать ServerSocket (это задача {@link ServerSocketChannel}).</li>
  * </ul>
  */
 public class ClientHandler implements Runnable {

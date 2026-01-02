@@ -25,14 +25,14 @@ import java.util.concurrent.Executors;
  *     <li>знает только о сервисах/порт-интерфейсах из слоя core.</li>
  * </ul>
  */
-public class ServerSocketChanel {
+public class ServerSocketChannel {
     private  ServerSocket serverSocket;
     private final SocketController socketController; // объект, который умеет обрабатывать команды
     private final ExecutorService clientPool; // пул потоков для клиентов
     private final int port;
     private volatile boolean running; // volatile обеспечение видимости изменений переменной между разными потоками
 
-    public ServerSocketChanel(int port, SocketController socketController) {
+    public ServerSocketChannel(int port, SocketController socketController) {
         this.port = port;
         this.socketController = Objects.requireNonNull(socketController, "socketController");
         this.clientPool = Executors.newCachedThreadPool();
@@ -45,7 +45,7 @@ public class ServerSocketChanel {
         running = true;
         try(ServerSocket serverSocket = new ServerSocket(port)){
             this.serverSocket = serverSocket;
-            System.out.println("GreenBasket ServerSocketChanel started on port " + port);
+            System.out.println("GreenBasket ServerSocketChannel started on port " + port);
             while (running) {
                 try {
                     // ждем подключения клиента
@@ -69,11 +69,11 @@ public class ServerSocketChanel {
                 }
             }
         } catch (IOException e) {
-            System.err.println("Failed to start ServerSocketChanel on port " + port + ": " + e.getMessage());
+            System.err.println("Failed to start ServerSocketChannel on port " + port + ": " + e.getMessage());
             e.printStackTrace();
         } finally {
             stop();
-            System.out.println("GreenBasket ServerSocketChanel stopped.");
+            System.out.println("GreenBasket ServerSocketChannel stopped.");
         }
     }
 
